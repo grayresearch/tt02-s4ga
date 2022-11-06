@@ -23,9 +23,7 @@ Each LUT configuration has this format:
 
 # ASIC implementation
 
-Check out the 3D GDS view:
-
-![](https://grayresearch.github.io/tt02-s4ga)
+[Explore the GDS 3D view](https://grayresearch.github.io/tt02-s4ga).
 
 # See also
 
