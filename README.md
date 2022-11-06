@@ -21,6 +21,14 @@ Each LUT configuration has this format:
         bit[16] mask;   // 4-LUT truth table
     };
 
-_More soon_.
+# ASIC implementation
+
+Check out the 3D GDS view:
+
+![](https://grayresearch.github.io/tt02-s4ga)
+
+# See also
 
 See also my prior [Zero-to-ASIC S4GA repo](https://github.com/grayresearch/s4ga).
+
+_More soon_.
