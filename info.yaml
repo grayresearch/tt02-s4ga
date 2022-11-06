@@ -14,13 +14,13 @@ project:
 #
 # This info will be automatically collected and used to make a datasheet for the chip.
 documentation: 
-  author:       "Matt Venn"      # Your name
-  discord:      "mattvenn"      # Your discord handle
-  title:        "7 segment seconds"      # Project title
-  description:  "count up to 10, one second at a time"      # Short description of what your project does
-  how_it_works: "uses a register and some combinational logic"      # Longer description of how the project works
-  how_to_test:  "after reset, the counter should increase by one every second"      # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
-  external_hw:  ""      # Describe any external hardware needed
+  author:       "Jan Gray"      # Your name
+  discord:      "jangray"      # Your discord handle
+  title:        "s4t2-fpga"      # Project title
+  description:  "super slow serial SRAM FPGA"      # Short description of what your project does
+  how_it_works: "receives nybble stream of FPGA LUT data, serially evaluates LUTs"      # Longer description of how the project works
+  how_to_test:  "pending"      # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
+  external_hw:  "23LC1024 serial SRAM"      # Describe any external hardware needed
   language:     "verilog" # other examples include Verilog, Amaranth, VHDL, etc
   doc_link:     ""      # URL to longer form documentation, eg the README.md in your repository
   clock_hz:     1000       # Clock frequency in Hz (if required)
