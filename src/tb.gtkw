@@ -1,18 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Nov  6 20:06:43 2022
+[*] Sun Nov  6 20:37:04 2022
 [*]
 [dumpfile] "/home/jan/git/tt02-s4t2-fpga/src/tb.vcd"
-[dumpfile_mtime] "Sun Nov  6 20:02:35 2022"
-[dumpfile_size] 149178
+[dumpfile_mtime] "Sun Nov  6 20:33:55 2022"
+[dumpfile_size] 149055
 [savefile] "/home/jan/git/tt02-s4t2-fpga/src/tb.gtkw"
-[timestart] 360900000
+[timestart] 0
 [size] 2160 1231
 [pos] -1 -1
-*-26.000000 738700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [sst_width] 297
-[signals_width] 118
+[signals_width] 136
 [sst_expanded] 1
 [sst_vpaned_height] 378
 @420
@@ -34,22 +34,25 @@ tb.s4ga.io_out[7:0]
 tb.s4ga.clk
 tb.s4ga.rst
 @22
-tb.s4ga.sr[11:0]
 tb.s4ga.si[3:0]
-tb.s4ga.mask[15:0]
 @23
-tb.s4ga.idx[3:0]
+tb.s4ga.n[4:0]
+@28
+tb.s4ga.k[2:0]
+tb.s4ga.seg[1:0]
+@22
+tb.s4ga.sr[11:0]
+tb.s4ga.mask[15:0]
+tb.s4ga.idx[4:0]
 @28
 tb.s4ga.in
 @22
 tb.s4ga.ins[3:0]
 @28
 tb.s4ga.k[2:0]
-tb.s4ga.lut
 @22
-tb.s4ga.luts[15:0]
-tb.s4ga.n[3:0]
+tb.s4ga.luts[31:0]
 @28
-tb.s4ga.seg[1:0]
+tb.s4ga.lut
 [pattern_trace] 1
 [pattern_trace] 0

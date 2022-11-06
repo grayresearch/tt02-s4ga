@@ -25,21 +25,21 @@ documentation:
   clock_hz:     100000 # Clock frequency in Hz (if required)
   picture:      ""      # relative path to a picture in your repository
   inputs:               # a description of what the inputs do
-    - clock
-    - reset
-    - none
-    - none
-    - none
-    - none
+    - clk				# clock
+    - rst				# sync reset
+    - si[0]				# LUTs' config data segment
+    - si[1]
+    - si[2]
+    - si[3]
     - none
     - none
   outputs:
-    - segment a         # a description of what the outputs do
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - none
+    - luts[0]			# eight LUT outputs
+    - luts[1]
+    - luts[2]
+    - luts[3]
+    - luts[4]
+    - luts[5]
+    - luts[6]
+    - luts[7]
 
