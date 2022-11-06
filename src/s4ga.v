@@ -1,3 +1,6 @@
+// Copyright (C) 2022, Gray Research LLC.
+// Licensed under the Apache License, Version 2.0.
+
 `default_nettype none
 
 `define V(N)        [(N)-1:0]
