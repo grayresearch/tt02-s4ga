@@ -13,11 +13,11 @@ The project is currently configured to repeatedly evaluate N=64 K=4-LUTs.
 Each LUT configuration has this format:
 
     // LUT config:
-    struct LUT_n64_k4 {
-        bit[8] in0;     // relative index of LUT input 0, in [0,63]
-        bit[8] in1;     // relative index of LUT input 1, in [0,63]
-        bit[8] in2;     // relative index of LUT input 2, in [0,63]
+    struct LUT_n64_k4 {	// all fields big-endian, most signif. nybble first:
         bit[8] in3;     // relative index of LUT input 3, in [0,63]
+        bit[8] in2;     // relative index of LUT input 2, in [0,63]
+        bit[8] in1;     // relative index of LUT input 1, in [0,63]
+        bit[8] in0;     // relative index of LUT input 0, in [0,63]
         bit[16] mask;   // 4-LUT truth table
     };
 
