@@ -1,34 +1,26 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
-# What is Tiny Tapeout?
+# tt02-s4ga
 
-TinyTapeout is an educational project that aims to make it easier and cheaper than ever to get your digital designs manufactured on a real chip!
+This is the TinyTapeout2 Super Slow Serial SRAM FPGA, S4GA, the best FPGA I could implement in ~100x100um of the 130nm Skywater ASIC PDK.
 
-Go to https://tinytapeout.com for instructions!
+This version of S4GA uses an external serial SRAM with SQI (QSPI) mode such as the Microchip 23LC512
+to continually stream in 4-bit segments of the LUTs' config data into the device.
 
-## How to change the Wokwi project
+While the LUT configuration data is streamed in from external SRAM, the current LUT output values are kept on-die.
 
-Edit the [info.yaml](info.yaml) and change the wokwi_id to match your project.
+The project is currently configured to repeatedly evaluate N=64 K=4-LUTs.
+Each LUT configuration has this format:
 
-## How to enable the GitHub actions to build the ASIC files
+    // LUT config:
+    struct LUT_n64_k4 {
+        bit[8] in0;     // relative index of LUT input 0, in [0,63]
+        bit[8] in1;     // relative index of LUT input 1, in [0,63]
+        bit[8] in2;     // relative index of LUT input 2, in [0,63]
+        bit[8] in3;     // relative index of LUT input 3, in [0,63]
+        bit[16] mask;   // 4-LUT truth table
+    };
 
-Please see the instructions for:
+_More soon_.
 
-* [Enabling GitHub Actions](https://tinytapeout.com/faq/#when-i-commit-my-change-the-gds-action-isnt-running)
-* [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
-
-## How does it work?
-
-When you edit the info.yaml to choose a different ID, the [GitHub Action](.github/workflows/gds.yaml) will fetch the digital netlist of your design from Wokwi.
-
-After that, the action uses the open source ASIC tool called [OpenLane](https://www.zerotoasiccourse.com/terminology/openlane/) to build the files needed to fabricate an ASIC.
-
-## Resources
-
-* [FAQ](https://tinytapeout.com/faq/)
-* [Digital design lessons](https://tinytapeout.com/digital_design/)
-* [Join the community](https://discord.gg/rPK2nSjxy8)
-
-## What next?
-
-* Share your GDS on Twitter, tag it [#tinytapeout](https://twitter.com/hashtag/tinytapeout?src=hashtag_click) and [link me](https://twitter.com/matthewvenn)!
+See also my prior [Zero-to-ASIC S4GA repo](https://github.com/grayresearch/s4ga).
