@@ -22,5 +22,5 @@ module tb(
     wire [7:0] io_out;
     assign luts = io_out;
 
-    S4GA #(.N(16), .K(4), .SI_W(4)) s4ga(.io_in, .io_out);
+    s4ga #(.N(16), .K(4), .SI_W(4)) s4ga(.io_in, .io_out);
 endmodule

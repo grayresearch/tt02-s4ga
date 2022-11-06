@@ -28,7 +28,7 @@
 //  bit[8] input[6];            // 6 6b indices padded to 6 8b indices
 //  bit[64] mask;               // LUT mask
 // };
-module S4GA #(
+module s4ga #(
     parameter int N     = 16,   // # LUTs
     parameter int K     = 4,    // # LUT inputs
     parameter int SI_W  = 4     // SI width
