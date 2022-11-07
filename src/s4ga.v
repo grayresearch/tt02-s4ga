@@ -29,8 +29,8 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 64,   // # LUTs
-    parameter int K     = 5,    // # LUT inputs
+    parameter int N     = 128,   // # LUTs
+    parameter int K     = 4,    // # LUT inputs
     parameter int SI_W  = 4     // SI width
 ) (
     input  wire `V(8)   io_in,
@@ -46,7 +46,7 @@ module s4ga #(
     localparam int IDX_SEGS = `SEG(N_W, SI_W);
 
     wire            clk;        // clock input
-    wire            rst;        // sync reset input
+    wire            rst;        // sync reset input -- must assert rst for >N cycles
     wire `V(SI_W)   si;         // LUTs' configuration segments input stream
     reg  `V(N)      luts;       // last N LUT outputs; shift register
 
@@ -75,7 +75,7 @@ module s4ga #(
         sr <= {sr,si};          // always collect input segments
 
         if (rst) begin
-            luts <= {luts,lut};
+            luts <= {luts,lut}; // serial shift reg reset saves N-1 gates -- but must assert reset for >N cycles
             ins <= 0;
             n <= 0;
             k <= 0;
