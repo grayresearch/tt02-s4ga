@@ -29,7 +29,7 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 128,   // # LUTs
+    parameter int N     = 80,   // # LUTs
     parameter int K     = 4,    // # LUT inputs
     parameter int SI_W  = 4     // SI width
 ) (
