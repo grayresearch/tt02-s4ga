@@ -10,8 +10,11 @@ async def test_7seg(dut):
     
     dut._log.info("reset")
     dut.rst.value = 1
-    await ClockCycles(dut.clk, 10)
+    dut.si.value = 0
+    await ClockCycles(dut.clk, 64 + 1);
     dut.rst.value = 0
+
+    # TODO: verify FPGA operation. For now we just exercise things.
 
     dut._log.info("go");
     for i in range(1000):

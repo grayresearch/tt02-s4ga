@@ -39,11 +39,11 @@ module s4ga #(
     localparam int N_W      = $clog2(N);
     localparam int K_W      = $clog2(K+1);  // k in [0,K]
     localparam int MASK_W   = 2**K;
-    localparam int IDX_W    = $clog2(N);
-    localparam int SR_W     = ((MASK_W >= IDX_W) ? MASK_W : IDX_W) - SI_W;
-    localparam int SEG_W    = $clog2(`SEG(SR_W, SI_W));
+    localparam int MAX_W    = (MASK_W >= N_W) ? MASK_W : N_W;
+    localparam int SR_W     = MAX_W - SI_W;
+    localparam int SEG_W    = $clog2(`SEG(MAX_W, SI_W));
     localparam int MASK_SEGS= `SEG(MASK_W, SI_W);
-    localparam int IDX_SEGS = `SEG(IDX_W, SI_W);
+    localparam int IDX_SEGS = `SEG(N_W, SI_W);
 
     wire            clk;        // clock input
     wire            rst;        // sync reset input
@@ -55,7 +55,7 @@ module s4ga #(
 
     reg  `V(SR_W)   sr;         // input shift reg of LUT input index (k<K) or LUT mask (k==K)
     wire `V(MASK_W) mask    = {sr,si};  // current LUT mask
-    wire `V(IDX_W)  idx     = {sr,si};  // current input index
+    wire `V(N_W)    idx     = {sr,si};  // current input index
     reg  `V(K)      ins;        // last K LUT inputs; shift register
 
     // control FSM
@@ -63,19 +63,20 @@ module s4ga #(
     reg  `V(K_W)    k;          // LUT input index counter; k in [0,K]: k<K => loading index; k==K => loading mask
     reg  `V(SEG_W)  seg;        // input segment counter
 
-    reg/*comb*/     in;         // a LUT input;  valid when k<K  && seg==IDX_SEGS-1
-    reg/*comb*/     lut;        // LUT output; valid when k==K && seg==MASK_SEGS-1
+    reg/*comb*/     in;         // a LUT input; valid when k<K  && seg==IDX_SEGS-1
+    reg/*comb*/     lut;        // LUT output;  valid when k==K && seg==MASK_SEGS-1
 
     always @* begin
         in = luts[idx];         // select an input bit from the various LUT outputs
-        lut = mask[ins];        // select a LUT output from the LUT mask indexed by the input bit vector
+        lut = mask[ins] & ~rst; // select a LUT output from the LUT mask indexed by the input bit vector
     end
 
     always @(posedge clk) begin
         sr <= {sr,si};          // always collect input segments
 
         if (rst) begin
-            luts <= 0;
+            luts <= {luts,lut};
+            ins <= 0;
             n <= 0;
             k <= 0;
             seg <= 0;
