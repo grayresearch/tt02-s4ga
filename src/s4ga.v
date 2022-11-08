@@ -55,8 +55,10 @@ module s4ga #(
 
     reg  `V(SR_W)   sr;         // input shift reg of LUT input index (k<K) or LUT mask (k==K)
     wire `V(MASK_W) mask    = {sr,si};  // current LUT mask
+    wire `V(MASK_W/2) half  = {sr,si};  // current LUT half mask (LSBs)
     wire `V(N_W)    idx     = {sr,si};  // current input index
     reg  `V(K)      ins;        // last K LUT inputs; shift register
+    reg             q;          // previous half-LUT output register
 
     // control FSM
     reg  `V(N_W)    n;          // LUT counter; n in [0,N)
@@ -67,7 +69,12 @@ module s4ga #(
     reg/*comb*/     lut;        // LUT output (when LUT frame received), else prior LUT output, else 0 during reset
 
     always @* begin
-        in = luts[idx];         // select an input bit from the various LUT outputs
+        if (&idx)
+            in = 1;             // index 11..11 => constant 1
+        else if (&(idx|1'b1))
+            in = q;             // index 11..10 => q register
+        else
+            in = luts[idx];     // select an input bit from the various LUT outputs
 
         if (rst)
             lut = 0;
@@ -87,6 +94,7 @@ module s4ga #(
             n <= 0;
             k <= 0;
             seg <= 0;
+            q <= 0;
         end else if (k != K) begin
             // input index segment
             if (seg == IDX_SEGS-1) begin
@@ -99,6 +107,7 @@ module s4ga #(
         end else begin
             // mask segment
             if (seg == MASK_SEGS-1) begin
+                q <= half[ins[K-2:0]];
                 n <= (n == N-1) ? 0 : (n + 1'b1);
                 k <= 0;
                 seg <= 0;

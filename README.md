@@ -22,6 +22,16 @@ Each LUT configuration has this format:
         bit[32] mask;   // 5-LUT truth table
     };
 
+## Ripple carry LUT optimization
+
+While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT mask using the K-1 inputs in[0],...,in[K-2], into the 'Q' register.
+This enables efficient ripple carry adders, using the upper half-LUT to evaluate sum[i] and the lower half-LUT to evaluate the carry[i], fed into the next LUT.
+This uses two special input indices:
+
+    in[i] == 2**$clog2(N)-1 (i.e., 'b111...111) => input is 1'b1;
+    in[i] == 2**$clog2(N)-2 (i.e., 'b111...110) => input is Q;
+    otherwise ith LUT input is LUTs[in[i]].
+
 # ASIC implementation
 
 [Explore the GDS 3D view](https://grayresearch.github.io/tt02-s4ga).
