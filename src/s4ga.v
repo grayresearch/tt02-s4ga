@@ -29,8 +29,8 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 64,   // # LUTs
-    parameter int K     = 5,    // # LUT inputs
+    parameter int N     = 127,  // # LUTs -- must not be a multiple of 'LUT segments count' -- use a prime number
+    parameter int K     = 4,    // # LUT inputs
     parameter int SI_W  = 4     // SI width
 ) (
     input  wire `V(8)   io_in,
@@ -48,7 +48,7 @@ module s4ga #(
     wire            clk;        // clock input
     wire            rst;        // sync reset input -- must assert rst for >N cycles
     wire `V(SI_W)   si;         // LUTs' configuration segments input stream
-    reg  `V(N)      luts;       // last N LUT outputs; shift register
+    reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
     assign {si,rst,clk} = io_in;
     assign io_out = luts;
@@ -64,18 +64,25 @@ module s4ga #(
     reg  `V(SEG_W)  seg;        // input segment counter
 
     reg/*comb*/     in;         // a LUT input; valid when k<K  && seg==IDX_SEGS-1
-    reg/*comb*/     lut;        // LUT output;  valid when k==K && seg==MASK_SEGS-1
+    reg/*comb*/     lut;        // LUT output (when LUT frame received), else prior LUT output, else 0 during reset
 
     always @* begin
         in = luts[idx];         // select an input bit from the various LUT outputs
-        lut = mask[ins] & ~rst; // select a LUT output from the LUT mask indexed by the input bit vector
+
+        if (rst)
+            lut = 0;
+        else if (k == K && seg == MASK_SEGS-1)
+            lut = mask[ins];    // LUT received: select a LUT output from the LUT mask indexed by the input bit vector
+        else
+            lut = luts[N-1];    // LUT not yet received: recirculate current LUT output
+                                // (shuffling circular shift register area optimization -- saves N-1 mux2s)
     end
 
     always @(posedge clk) begin
         sr <= {sr,si};          // always collect input segments
+        luts <= {luts,lut};     // always recirculate LUTs / load LUT updates -- area optimization
 
         if (rst) begin
-            luts <= {luts,lut}; // serial shift reg reset saves N-1 gates -- but must assert reset for >N cycles
             ins <= 0;
             n <= 0;
             k <= 0;
@@ -92,7 +99,6 @@ module s4ga #(
         end else begin
             // mask segment
             if (seg == MASK_SEGS-1) begin
-                luts <= {luts,lut};
                 n <= (n == N-1) ? 0 : (n + 1'b1);
                 k <= 0;
                 seg <= 0;
