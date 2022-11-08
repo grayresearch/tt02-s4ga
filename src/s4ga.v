@@ -29,7 +29,7 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 97,   // # LUTs -- must not be a multiple of 'LUT segments count' -- use a prime number
+    parameter int N     = 101,  // # LUTs -- must not be a multiple of 'LUT segments count' -- use a prime number
     parameter int K     = 5,    // # LUT inputs
     parameter int SI_W  = 4     // SI width
 ) (
