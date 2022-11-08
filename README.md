@@ -9,11 +9,11 @@ to continually stream in 4-bit segments of the LUTs' config data into the device
 
 While the LUT configuration data is streamed in from external SRAM, the current LUT output values are kept on-die.
 
-The project is currently configured to repeatedly evaluate N=64 K=5-LUTs.
+The project is currently configured to repeatedly evaluate N=101 K=5-LUTs.
 Each LUT configuration has this format:
 
     // LUT config:
-    struct LUT_n64_k5 { // all fields big-endian, most signif. nybble first:
+    struct LUT_n101_k5 { // all fields big-endian, most signif. nybble first:
         bit[8] in4;     // relative index of LUT input 4, in [0,63]
         bit[8] in3;     // relative index of LUT input 3, in [0,63]
         bit[8] in2;     // relative index of LUT input 2, in [0,63]
