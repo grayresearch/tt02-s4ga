@@ -30,7 +30,7 @@ set ::env(BOTTOM_MARGIN_MULT) 2
 # absolute die size
 set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 90 120"
-set ::env(FP_CORE_UTIL) 45
+set ::env(FP_CORE_UTIL) 50
 set ::env(PL_BASIC_PLACEMENT) {1}
 
 set ::env(FP_IO_HLENGTH) 2
