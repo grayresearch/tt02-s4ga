@@ -9,11 +9,11 @@ to continually stream in 4-bit segments of the LUTs' config data into the device
 
 While the LUT configuration data is streamed in from external SRAM, the current LUT output values are kept on-die.
 
-The project is currently configured to repeatedly evaluate N=101 K=5-LUTs.
+The project is currently configured to repeatedly evaluate N=89 K=5-LUTs.
 Each LUT configuration has this format:
 
     // LUT config:
-    struct LUT_n101_k5 { // all fields big-endian, most signif. nybble first:
+    struct LUT_n89_k5 { // all fields big-endian, most signif. nybble first:
         bit[8] in4;     // relative index of LUT input 4, in [0,63]
         bit[8] in3;     // relative index of LUT input 3, in [0,63]
         bit[8] in2;     // relative index of LUT input 2, in [0,63]
@@ -25,10 +25,10 @@ Each LUT configuration has this format:
 ## Ripple carry LUT optimization
 
 While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT mask using the K-1 inputs in[0],...,in[K-2], into the 'Q' register.
-This enables efficient ripple carry adders, using the upper half-LUT to evaluate sum[i] and the lower half-LUT to evaluate the carry[i], fed into the next LUT.
+This enables efficient ripple carry adders, using the upper half-LUT to evaluate sum[i] and the lower half-LUT to evaluate the carry[i], fed into the next LUT (via Q).
 This uses two special input indices:
 
-    in[i] == 2**$clog2(N)-1 (i.e., 'b111...111) => input is 1'b1;
+    in[i] == 2**$clog2(N)-1 (i.e., 'b111...111) => input is constant 1;
     in[i] == 2**$clog2(N)-2 (i.e., 'b111...110) => input is Q;
     otherwise ith LUT input is LUTs[in[i]].
 
