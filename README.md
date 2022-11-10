@@ -13,11 +13,11 @@ While the LUT configuration data is streamed in from external SRAM,
 the current LUT output values are kept on-die.
 
 As a circuit optimization, the LUT outputs circular shift register 'luts'
-shifts every cycle, but LUT evaluation occurs every LL = K * ($clog2(N)+3)/4
-+ 2^K/4 cycles. Thus LUT output values are not sequential and a given
-LUT output index changes from cycle to cyclei. Therefore LUT output
-references in LUT input indices in the configuration bitstream must
-compensate for these shenanigans.
+shifts every cycle, but LUT evaluation occurs every LL = K * ($clog2(N)+3)/4 + 2^K/4 cycles.
+Thus LUT output values are not sequential and a given LUT output index
+changes from cycle to cyclei. Therefore LUT output references in LUT
+input indices in the configuration bitstream must compensate for these
+shenanigans.
 
 The project is currently configured to repeatedly evaluate N=89 K=5-LUTs with LL=14 cycles.
 Each LUT configuration has this format:
