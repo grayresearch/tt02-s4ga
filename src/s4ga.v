@@ -4,11 +4,10 @@
 `default_nettype none
 
 `define V(N)        [(N)-1:0]
-`define SEG(N,M)    (((N) + ((M)-1)) / (M))
+`define SEGS(N,M)   (((N) + ((M)-1)) / (M))
 
 // Receive a stream of LUTs' LUT config segments of SI_W bits per clock.
 // When an entire LUT config is recevied, compute the next value of that LUT.
-// Output the most recent 8 LUT outputs.
 //
 // LUT config:
 // packed struct LUT_n_k {  // N K-LUTs
@@ -29,35 +28,39 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 89,   // # LUTs -- must not be a multiple of 'LUT segments count' -- use a prime number
+    parameter int N     = 89,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
     parameter int K     = 5,    // # LUT inputs
+    parameter int I     = 2,    // # FPGA inputs
+    parameter int O     = 8,    // # FPGA outputs
     parameter int SI_W  = 4     // SI width
 ) (
-    input  wire `V(8)   io_in,
-    output reg  `V(8)   io_out
+    input  wire `V(8)   io_in,  // [0]:clk [1]:rst [5:2]:si [7:6]:inputs
+    output reg  `V(8)   io_out  // [7:0] outputs
 );
     localparam int N_W      = $clog2(N);
     localparam int K_W      = $clog2(K+1);  // k in [0,K]
     localparam int MASK_W   = 2**K;
     localparam int MAX_W    = (MASK_W >= N_W) ? MASK_W : N_W;
     localparam int SR_W     = MAX_W - SI_W;
-    localparam int SEG_W    = $clog2(`SEG(MAX_W, SI_W));
-    localparam int MASK_SEGS= `SEG(MASK_W, SI_W);
-    localparam int IDX_SEGS = `SEG(N_W, SI_W);
+    localparam int SEG_W    = $clog2(`SEGS(MAX_W, SI_W));
+    localparam int MASK_SEGS= `SEGS(MASK_W, SI_W);
+    localparam int IDX_SEGS = `SEGS(N_W, SI_W);
 
     wire            clk;        // clock input
     wire            rst;        // sync reset input -- must assert rst for >N cycles
     wire `V(SI_W)   si;         // LUTs' configuration segments input stream
     reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
-    assign {si,rst,clk} = io_in;
-    assign io_out = luts;
+    wire `V(I)      inputs;     // FPGA inputs
+    reg  `V(O)      outputs;    // pending FPGA outputs; shift register
+
+    assign {inputs,si,rst,clk} = io_in;
 
     reg  `V(SR_W)   sr;         // input shift reg of LUT input index (k<K) or LUT mask (k==K)
     wire `V(MASK_W) mask    = {sr,si};  // current LUT mask
     wire `V(MASK_W/2) half  = {sr,si};  // current LUT half mask (LSBs)
     wire `V(N_W)    idx     = {sr,si};  // current input index
-    reg  `V(K)      ins;        // last K LUT inputs; shift register
+    reg  `V(K)      ins;        // LUT input values; shift register
     reg             q;          // previous half-LUT output register
 
     // control FSM
@@ -76,13 +79,18 @@ module s4ga #(
         else
             in = luts[idx];     // select an input bit from the various LUT outputs
 
-        if (rst)
-            lut = 0;
-        else if (k == K && seg == MASK_SEGS-1)
-            lut = mask[ins];    // LUT received: select a LUT output from the LUT mask indexed by the input bit vector
-        else
+        if (rst) begin
+            lut = '0;
+        end else if (k == K && seg == MASK_SEGS-1) begin
+            // LUT received
+            if (n < I)
+                lut = inputs[n];// ignore LUT mask, propagate FPGA input to LUT output
+            else
+                lut = mask[ins];// select LUT mask bit indexed by the input bit vector
+        end else begin
             lut = luts[N-1];    // LUT not yet received: recirculate current LUT output
                                 // (shuffling circular shift register area optimization -- saves N-1 mux2s)
+        end
     end
 
     always @(posedge clk) begin
@@ -90,27 +98,39 @@ module s4ga #(
         luts <= {luts,lut};     // always recirculate LUTs / load LUT updates -- area optimization
 
         if (rst) begin
-            ins <= 0;
-            n <= 0;
-            k <= 0;
-            seg <= 0;
-            q <= 0;
+            ins <= '0;
+            n <= '0;
+            k <= '0;
+            seg <= '0;
+            q <= '0;
+            outputs <= '0;
+            io_out <= '0;
         end else if (k != K) begin
-            // input index segment
+            // LUT input index segment
             if (seg == IDX_SEGS-1) begin
+                // fetch and shift in the next LUT input
                 ins <= {ins,in};
                 k <= k + 1'b1;
-                seg <= 0;
+                seg <= '0;
             end else begin
                 seg <= seg + 1'b1;
             end
         end else begin
             // mask segment
             if (seg == MASK_SEGS-1) begin
+                // evaluate LUT and its half-LUT
+                // luts <= {luts,lut}; -- see "always recirculates" above
                 q <= half[ins[K-2:0]];
-                n <= (n == N-1) ? 0 : (n + 1'b1);
-                k <= 0;
-                seg <= 0;
+
+                // last O LUTs are also module outputs
+                outputs <= {outputs,lut};
+                // all LUTs evaluated: update FPGA outputs
+                if (n == N-1)
+                    io_out <= {outputs,lut};
+
+                n <= (n == N-1) ? '0 : (n + 1'b1);
+                k <= '0;
+                seg <= '0;
             end else begin
                 seg <= seg + 1'b1;
             end

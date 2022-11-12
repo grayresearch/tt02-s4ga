@@ -1,4 +1,4 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
+![](../..w/orkflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
 # tt02-s4ga
 
@@ -38,6 +38,40 @@ Each LUT configuration has this format:
         bit[32] mask;   // 5-LUT truth table
     };
 
+## I/Os
+
+Parameter I is the number of FPGA input signals. Currently I=2.
+These become the values of the first I LUTs
+(i.e., the first I LUT inputs, and LUT masks, are ignored.)
+
+Parameter O is the number of FPGA outputs. Currently O=8.
+The last O LUT outputs are copied to the io_out[7:0] output register,
+in each cycle in which evaluation of all of the N K-LUTs completes.
+Note: on reset, io_out[7:0] is '0.
+
+## Pinout
+
+All inputs are synchronous to clk.
+All outputs switch on clk and switch in the same cycle.
+
+	Pin			Signal	Description
+	io_in[0]	clk		external clock
+	io_in[1]	rst		+ve sync reset
+	io_in[2]	si[0]	LUT configuration lsb
+	io_in[3]	si[1]	LUT configuration bit
+	io_in[4]	si[2]	LUT configuration bit
+	io_in[5]	si[3]	LUT configuration msb
+	io_in[6]	in[0]	input 0 => LUT 0
+	io_in[7]	in[1]	input 1 => LUT 1
+	io_out[0]	out[0]	output 0 <= LUT N-I+0
+	io_out[1]	out[1]	output 1 <= LUT N-I+1
+	io_out[2]	out[2]	output 2 <= LUT N-I+2
+	io_out[3]	out[3]	output 3 <= LUT N-I+3
+	io_out[4]	out[4]	output 4 <= LUT N-I+4
+	io_out[5]	out[5]	output 5 <= LUT N-I+5
+	io_out[6]	out[6]	output 6 <= LUT N-I+6
+	io_out[7]	out[7]	output 7 <= LUT N-I+7
+
 ## Ripple carry LUT optimization
 
 While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT
@@ -62,6 +96,5 @@ See also my prior [Zero-to-ASIC S4GA repo](https://github.com/grayresearch/s4ga)
 
 1. Test bench of a (hand techmapped) FPGA circuit.
 2. Whether/how to do autonomous control of external SPI memory.
-3. Redo IOs to enable expandable external input and output regs w/ 74HC595 & 74HC165.
 
 _More soon_.
