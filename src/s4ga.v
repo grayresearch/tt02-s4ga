@@ -47,7 +47,7 @@ module s4ga #(
     localparam int IDX_SEGS = `SEGS(N_W, SI_W);
 
     wire            clk;        // clock input
-    wire            rst;        // sync reset input -- must assert rst for >N cycles
+    wire            rst;        // sync reset input -- must assert rst for > max(N,O) cycles
     wire `V(SI_W)   si;         // LUTs' configuration segments input stream
     reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
@@ -103,8 +103,9 @@ module s4ga #(
             k <= '0;
             seg <= '0;
             q <= '0;
-            outputs <= '0;
-            io_out <= '0;
+            // serial reset, saves area
+            outputs <= {outputs,lut};
+            io_out  <= {outputs,lut};
         end else if (k != K) begin
             // LUT input index segment
             if (seg == IDX_SEGS-1) begin
