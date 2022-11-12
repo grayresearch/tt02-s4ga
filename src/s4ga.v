@@ -28,7 +28,7 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 79,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
+    parameter int N     = 73,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
     parameter int K     = 5,    // # LUT inputs
     parameter int I     = 2,    // # FPGA inputs
     parameter int O     = 8,    // # FPGA outputs
