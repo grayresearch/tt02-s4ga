@@ -45,14 +45,14 @@ module s4ga #(
     localparam int SEG_W    = $clog2(`SEGS(MAX_W, SI_W));
     localparam int MASK_SEGS= `SEGS(MASK_W, SI_W);
     localparam int IDX_SEGS = `SEGS(N_W, SI_W);
+    localparam int LL       = K*IDX_SEGS + MASK_SEGS;   // LUT (transmission) latency
 
     wire            clk;        // clock input
-    wire            rst;        // sync reset input -- must assert rst for > max(N,O) cycles
+    wire            rst;        // sync reset input -- must assert rst for >N cycles
     wire `V(SI_W)   si;         // LUTs' configuration segments input stream
     reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
     wire `V(I)      inputs;     // FPGA inputs
-    reg  `V(O)      outputs;    // pending FPGA outputs; shift register
 
     assign {inputs,si,rst,clk} = io_in;
 
@@ -70,6 +70,7 @@ module s4ga #(
 
     reg/*comb*/     in;         // a LUT input; valid when k<K  && seg==IDX_SEGS-1
     reg/*comb*/     lut;        // LUT output (when LUT frame received), else prior LUT output, else 0 during reset
+    reg/*comb*/`V(O) outputs;   // last O LUT outputs
 
     always @* begin
         if (&idx)
@@ -91,6 +92,12 @@ module s4ga #(
             lut = luts[N-1];    // LUT not yet received: recirculate current LUT output
                                 // (shuffling circular shift register area optimization -- saves N-1 mux2s)
         end
+
+        // locate last O LUT outputs in the luts shuffling circular shift register (uses 0 gates)
+        outputs[0] = lut;
+        for (int i = 1; i < O; ++i) begin
+            outputs[i] = luts[(LL*i-1) % N];
+        end
     end
 
     always @(posedge clk) begin
@@ -103,9 +110,8 @@ module s4ga #(
             k <= '0;
             seg <= '0;
             q <= '0;
-            // serial reset, saves area
-            outputs <= {outputs,lut};
-            io_out  <= {outputs,lut};
+            // serial reset (eventually luts=='0 and thus outputs=='0)
+            io_out <= outputs;
         end else if (k != K) begin
             // LUT input index segment
             if (seg == IDX_SEGS-1) begin
@@ -123,11 +129,9 @@ module s4ga #(
                 // luts <= {luts,lut}; -- see "always recirculates" above
                 q <= half[ins[K-2:0]];
 
-                // last O LUTs are also module outputs
-                outputs <= {outputs,lut};
                 // all LUTs evaluated: update FPGA outputs
                 if (n == N-1)
-                    io_out <= {outputs,lut};
+                    io_out <= outputs;
 
                 n <= (n == N-1) ? '0 : (n + 1'b1);
                 k <= '0;
