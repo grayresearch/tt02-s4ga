@@ -38,6 +38,18 @@ Each LUT configuration has this format:
         bit[32] mask;   // 5-LUT truth table
     };
 
+## Ripple carry LUT optimization
+
+While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT
+mask using the K-1 inputs in[0],...,in[K-2], into the 'Q' register.
+This enables efficient ripple carry adders, using the upper half-LUT
+to evaluate sum[i] and the lower half-LUT to evaluate the carry[i],
+fed into the next LUT (via Q).  This uses two special input indices:
+
+    in[i] == 2^$clog2(N)-1 (i.e., 'b111...111) => input is constant 1;
+    in[i] == 2^$clog2(N)-2 (i.e., 'b111...110) => input is Q;
+    otherwise ith LUT input is LUTs[in[i]].
+
 ## I/Os
 
 Parameter I is the number of FPGA input signals. Currently I=2.
@@ -71,18 +83,6 @@ All outputs switch on clk and switch in the same cycle.
     io_out[5]   out[5]  output 5 <= LUT N-I+5
     io_out[6]   out[6]  output 6 <= LUT N-I+6
     io_out[7]   out[7]  output 7 <= LUT N-I+7
-
-## Ripple carry LUT optimization
-
-While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT
-mask using the K-1 inputs in[0],...,in[K-2], into the 'Q' register.
-This enables efficient ripple carry adders, using the upper half-LUT
-to evaluate sum[i] and the lower half-LUT to evaluate the carry[i],
-fed into the next LUT (via Q).  This uses two special input indices:
-
-    in[i] == 2^$clog2(N)-1 (i.e., 'b111...111) => input is constant 1;
-    in[i] == 2^$clog2(N)-2 (i.e., 'b111...110) => input is Q;
-    otherwise ith LUT input is LUTs[in[i]].
 
 ## ASIC implementation
 
