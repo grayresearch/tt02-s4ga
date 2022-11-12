@@ -25,7 +25,7 @@ A given LUT output's index increments / wraps around to 0, each cycle.
 Therefore LUT outputs' LUT input indices in the configuration bitstream
 must compensate for these shenanigans.
 
-The project is currently configured to repeatedly evaluate N=71 K=5-LUTs with LL=14 cycles.
+The project is currently configured to repeatedly evaluate N=71 K=5-LUTs with LL=18 cycles.
 Each LUT configuration has this format:
 
     // LUT config:
