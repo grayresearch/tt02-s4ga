@@ -95,7 +95,7 @@ module s4ga #(
 
         // locate last O LUT outputs in the luts shuffling circular shift register (uses 0 gates)
         outputs[0] = lut;
-        for (int i = 1; i < O; ++i) begin
+        for (int i = 1; i < O; i += 1) begin
             outputs[i] = luts[(LL*i-1) % N];
         end
     end
