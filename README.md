@@ -1,4 +1,4 @@
-![](../..w/orkflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
+![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
 # tt02-s4ga
 
@@ -54,23 +54,23 @@ Note: on reset, io_out[7:0] is '0.
 All inputs are synchronous to clk.
 All outputs switch on clk and switch in the same cycle.
 
-	Pin			Signal	Description
-	io_in[0]	clk		external clock
-	io_in[1]	rst		+ve sync reset
-	io_in[2]	si[0]	LUT configuration lsb
-	io_in[3]	si[1]	LUT configuration bit
-	io_in[4]	si[2]	LUT configuration bit
-	io_in[5]	si[3]	LUT configuration msb
-	io_in[6]	in[0]	input 0 => LUT 0
-	io_in[7]	in[1]	input 1 => LUT 1
-	io_out[0]	out[0]	output 0 <= LUT N-I+0
-	io_out[1]	out[1]	output 1 <= LUT N-I+1
-	io_out[2]	out[2]	output 2 <= LUT N-I+2
-	io_out[3]	out[3]	output 3 <= LUT N-I+3
-	io_out[4]	out[4]	output 4 <= LUT N-I+4
-	io_out[5]	out[5]	output 5 <= LUT N-I+5
-	io_out[6]	out[6]	output 6 <= LUT N-I+6
-	io_out[7]	out[7]	output 7 <= LUT N-I+7
+    Pin         Signal  Description
+    io_in[0]    clk     external clock
+    io_in[1]    rst     +ve sync reset
+    io_in[2]    si[0]   LUT configuration lsb
+    io_in[3]    si[1]   LUT configuration bit
+    io_in[4]    si[2]   LUT configuration bit
+    io_in[5]    si[3]   LUT configuration msb
+    io_in[6]    in[0]   input 0 => LUT 0
+    io_in[7]    in[1]   input 1 => LUT 1
+    io_out[0]   out[0]  output 0 <= LUT N-I+0
+    io_out[1]   out[1]  output 1 <= LUT N-I+1
+    io_out[2]   out[2]  output 2 <= LUT N-I+2
+    io_out[3]   out[3]  output 3 <= LUT N-I+3
+    io_out[4]   out[4]  output 4 <= LUT N-I+4
+    io_out[5]   out[5]  output 5 <= LUT N-I+5
+    io_out[6]   out[6]  output 6 <= LUT N-I+6
+    io_out[7]   out[7]  output 7 <= LUT N-I+7
 
 ## Ripple carry LUT optimization
 
