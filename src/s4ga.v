@@ -31,11 +31,11 @@ module s4ga #(
     parameter N         = 71,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
     parameter K         = 5,    // # LUT inputs
     parameter I         = 2,    // # FPGA inputs
-    parameter O         = 8,    // # FPGA outputs
+    parameter O         = 7,    // # FPGA outputs
     parameter SI_W      = 4     // SI width
 ) (
     input  wire `V(8)   io_in,  // [0]:clk [1]:rst [5:2]:si [7:6]:inputs
-    output reg  `V(8)   io_out  // [7:0] outputs
+    output reg  `V(8)   io_out  // [6:0] outputs [7]:debug
 );
     localparam N_W      = $clog2(N);
     localparam K_W      = $clog2(K+1);  // k in [0,K]
@@ -53,6 +53,7 @@ module s4ga #(
     reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
     wire `V(I)      inputs;     // FPGA inputs
+    reg/*comb*/     debug;      // debug output
 
     assign {inputs,si,rst,clk} = io_in;
 
@@ -72,7 +73,7 @@ module s4ga #(
     reg/*comb*/     lut;        // LUT output (when LUT frame received), else prior LUT output, else 0 during reset
     reg/*comb*/`V(O) outputs;   // last O LUT outputs
 
-    integer			i;
+    integer         i;
 
     always @* begin
         if (&idx)
@@ -100,11 +101,23 @@ module s4ga #(
         for (i = 1; i < O; i = i + 1) begin
             outputs[i] = luts[(LL*i-1) % N];
         end
+
+        // debug output affords observability evaluated LUT inputs and LUT outputs
+        if (rst)
+            debug = 0;
+        else if (k != K && seg == IDX_SEGS-1)
+            debug = in;
+        else if (k == K && seg == MASK_SEGS-1)
+            debug = lut;
+        else
+            debug = 0;
     end
 
     always @(posedge clk) begin
         sr <= {sr,si};          // always collect input segments
         luts <= {luts,lut};     // always recirculate LUTs / load LUT updates -- area optimization
+
+        io_out[7] <= debug;
 
         if (rst) begin
             ins <= '0;
@@ -113,7 +126,7 @@ module s4ga #(
             seg <= '0;
             q <= '0;
             // serial reset (eventually luts=='0 and thus outputs=='0)
-            io_out <= outputs;
+            io_out[O-1:0] <= outputs;
         end else if (k != K) begin
             // LUT input index segment
             if (seg == IDX_SEGS-1) begin
@@ -133,7 +146,7 @@ module s4ga #(
 
                 // all LUTs evaluated: update FPGA outputs
                 if (n == N-1)
-                    io_out <= outputs;
+                    io_out[O-1:0] <= outputs;
 
                 n <= (n == N-1) ? '0 : (n + 1'b1);
                 k <= '0;

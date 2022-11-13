@@ -56,10 +56,10 @@ Parameter I is the number of FPGA input signals. Currently I=2.
 These become the values of the first I LUTs
 (i.e., the first I LUT inputs, and LUT masks, are ignored.)
 
-Parameter O is the number of FPGA outputs. Currently O=8.
-The last O LUT outputs are copied to the io_out[7:0] output register,
+Parameter O is the number of FPGA outputs. Currently O=7.
+The last O LUT outputs are copied to the io_out[6:0] output register,
 in each cycle in which evaluation of all of the N K-LUTs completes.
-Note: on reset, io_out[7:0] is '0.
+On reset, io_out[6:0] is '0.
 
 ## Pinout
 
@@ -82,7 +82,7 @@ All outputs switch on clk and switch in the same cycle.
     io_out[4]   out[4]  output 4 <= LUT N-I+4
     io_out[5]   out[5]  output 5 <= LUT N-I+5
     io_out[6]   out[6]  output 6 <= LUT N-I+6
-    io_out[7]   out[7]  output 7 <= LUT N-I+7
+    io_out[7]   debug   debug: evaluated LUT input values, LUT output values
 
 ## ASIC implementation
 

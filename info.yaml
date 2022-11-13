@@ -18,7 +18,7 @@ documentation:
   title:        "S4GA"      # Project title
   description:  "super slow serial SRAM FPGA"      # Short description of what your project does
   how_it_works: "receives nybble stream of LUTs' config data, serially evaluates LUTs"      # Longer description of how the project works
-  how_to_test:  "pending"      # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
+  how_to_test:  "tricky"      # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   external_hw:  "serial SRAM or FLASH"      # Describe any external hardware needed
   language:     "verilog" # other examples include Verilog, Amaranth, VHDL, etc
   doc_link:     "https://github.com/grayresearch/tt02-s4ga/blob/main/README.md"
@@ -26,7 +26,7 @@ documentation:
   picture:      ""      # relative path to a picture in your repository
   inputs:               # a description of what the inputs do
     - clk               # external clock
-    - rst               # +ve sync reset
+    - rst               # +ve sync reset -- assert for >N cycles
     - si[0]             # LUT configuration lsb
     - si[1]             # LUT configuration bit
     - si[2]             # LUT configuration bit
@@ -41,5 +41,5 @@ documentation:
     - out[4]            # output 4 <= LUT N-I+4
     - out[5]            # output 5 <= LUT N-I+5
     - out[6]            # output 6 <= LUT N-I+6
-    - out[7]            # output 7 <= LUT N-I+7
+    - debug             # debug: evaluated LUT input values, LUT output values
 
