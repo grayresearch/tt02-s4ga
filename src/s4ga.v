@@ -53,7 +53,7 @@ module s4ga #(
     reg  `V(N)      luts;       // last N LUT outputs; shuffling circular shift register
 
     wire `V(I)      inputs;     // FPGA inputs
-    reg/*comb*/     debug;      // debug output
+    reg/*comb*/     debug;      // debug output	-- stream of evaluated LUT inputs and outputs
 
     assign {inputs,si,rst,clk} = io_in;
 
@@ -103,15 +103,11 @@ module s4ga #(
             outputs[i] = luts[(LL*i-1) % N];
         end
 
-        // debug output affords observability evaluated LUT inputs and LUT outputs
-        if (rst)
-            debug = 1'b0;
-        else if (k != K && seg == IDX_SEGS-1)
-            debug = in;
-        else if (k == K && seg == MASK_SEGS-1)
-            debug = lut;
+        // output evaluated LUT inputs, evaluated LUT outputs, or prior LUT shift register outputs
+        if (k != K && seg == IDX_SEGS-1)
+            debug = in;			// LUT input, valid this cycle
         else
-            debug = 1'b0;
+            debug = lut;
     end
 
     always @(posedge clk) begin
