@@ -28,24 +28,24 @@
 //  bit[64] mask;               // LUT mask
 // };
 module s4ga #(
-    parameter int N     = 71,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
-    parameter int K     = 5,    // # LUT inputs
-    parameter int I     = 2,    // # FPGA inputs
-    parameter int O     = 8,    // # FPGA outputs
-    parameter int SI_W  = 4     // SI width
+    parameter N         = 71,   // # LUTs -- must not be multiple of LL (LUT latency) -- use a prime number
+    parameter K         = 5,    // # LUT inputs
+    parameter I         = 2,    // # FPGA inputs
+    parameter O         = 8,    // # FPGA outputs
+    parameter SI_W      = 4     // SI width
 ) (
     input  wire `V(8)   io_in,  // [0]:clk [1]:rst [5:2]:si [7:6]:inputs
     output reg  `V(8)   io_out  // [7:0] outputs
 );
-    localparam int N_W      = $clog2(N);
-    localparam int K_W      = $clog2(K+1);  // k in [0,K]
-    localparam int MASK_W   = 2**K;
-    localparam int MAX_W    = (MASK_W >= N_W) ? MASK_W : N_W;
-    localparam int SR_W     = MAX_W - SI_W;
-    localparam int SEG_W    = $clog2(`SEGS(MAX_W, SI_W));
-    localparam int MASK_SEGS= `SEGS(MASK_W, SI_W);
-    localparam int IDX_SEGS = `SEGS(N_W, SI_W);
-    localparam int LL       = K*IDX_SEGS + MASK_SEGS;   // LUT (transmission) latency
+    localparam N_W      = $clog2(N);
+    localparam K_W      = $clog2(K+1);  // k in [0,K]
+    localparam MASK_W   = 2**K;
+    localparam MAX_W    = (MASK_W >= N_W) ? MASK_W : N_W;
+    localparam SR_W     = MAX_W - SI_W;
+    localparam SEG_W    = $clog2(`SEGS(MAX_W, SI_W));
+    localparam MASK_SEGS= `SEGS(MASK_W, SI_W);
+    localparam IDX_SEGS = `SEGS(N_W, SI_W);
+    localparam LL       = K*IDX_SEGS + MASK_SEGS;   // LUT (transmission) latency
 
     wire            clk;        // clock input
     wire            rst;        // sync reset input -- must assert rst for >N cycles
@@ -72,6 +72,8 @@ module s4ga #(
     reg/*comb*/     lut;        // LUT output (when LUT frame received), else prior LUT output, else 0 during reset
     reg/*comb*/`V(O) outputs;   // last O LUT outputs
 
+    integer			i;
+
     always @* begin
         if (&idx)
             in = 1;             // index 11..11 => constant 1
@@ -95,7 +97,7 @@ module s4ga #(
 
         // locate last O LUT outputs in the luts shuffling circular shift register (uses 0 gates)
         outputs[0] = lut;
-        for (int i = 1; i < O; i += 1) begin
+        for (i = 1; i < O; i = i + 1) begin
             outputs[i] = luts[(LL*i-1) % N];
         end
     end
