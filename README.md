@@ -50,6 +50,7 @@ fed into the next LUT (via Q).
 
 LUT input indices with most significant bits = 1 encode four special LUT input values.
 For example with N=71, i.e. 7b indices, we have
+
     7'h7C   => LUT input is ith FPGA input
     7'h7D   => LUT input is Q
     7'h7E   => LUT input is constant 0
