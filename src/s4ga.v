@@ -76,21 +76,22 @@ module s4ga #(
     integer         i;
 
     always @* begin
-        if (&idx)
-            in = 1;             // index 11..11 => constant 1
-        else if (&(idx|1'b1))
-            in = q;             // index 11..10 => q register
-        else
+        if (&idx[N_W-1:2]) begin
+            // process special indices designated 'b11..11xx
+            case (idx[1:0])
+            2'b00: in = inputs[n[$clog2(I)-1:0]]; // n'th input pin
+            2'b01: in = q;
+            2'b10: in = 1'b0;
+            2'b11: in = 1'b1;
+            endcase
+        end else begin
             in = luts[idx];     // select an input bit from the various LUT outputs
+        end
 
         if (rst) begin
-            lut = '0;
+            lut = 1'b0;
         end else if (k == K && seg == MASK_SEGS-1) begin
-            // LUT received
-            if (n < I)
-                lut = inputs[n];// ignore LUT mask, propagate FPGA input to LUT output
-            else
-                lut = mask[ins];// select LUT mask bit indexed by the input bit vector
+            lut = mask[ins];// select LUT mask bit indexed by the input bit vector
         end else begin
             lut = luts[N-1];    // LUT not yet received: recirculate current LUT output
                                 // (shuffling circular shift register area optimization -- saves N-1 mux2s)
@@ -104,13 +105,13 @@ module s4ga #(
 
         // debug output affords observability evaluated LUT inputs and LUT outputs
         if (rst)
-            debug = 0;
+            debug = 1'b0;
         else if (k != K && seg == IDX_SEGS-1)
             debug = in;
         else if (k == K && seg == MASK_SEGS-1)
             debug = lut;
         else
-            debug = 0;
+            debug = 1'b0;
     end
 
     always @(posedge clk) begin
@@ -124,7 +125,7 @@ module s4ga #(
             n <= '0;
             k <= '0;
             seg <= '0;
-            q <= '0;
+            q <= 1'b0;
             // serial reset (eventually luts=='0 and thus outputs=='0)
             io_out[O-1:0] <= outputs;
         end else if (k != K) begin

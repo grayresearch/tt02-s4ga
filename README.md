@@ -44,11 +44,16 @@ While evaluating each K-LUT, S4GA also evaluates the LUT's lower half-LUT
 mask using the K-1 inputs in[0],...,in[K-2], into the 'Q' register.
 This enables efficient ripple carry adders, using the upper half-LUT
 to evaluate sum[i] and the lower half-LUT to evaluate the carry[i],
-fed into the next LUT (via Q).  This uses two special input indices:
+fed into the next LUT (via Q).
 
-    in[i] == 2^$clog2(N)-1 (i.e., 'b111...111) => input is constant 1;
-    in[i] == 2^$clog2(N)-2 (i.e., 'b111...110) => input is Q;
-    otherwise ith LUT input is LUTs[in[i]].
+## Special LUT input indices: 
+
+LUT input indices with most significant bits = 1 encode four special LUT input values.
+For example with N=71, i.e. 7b indices, we have
+    7'h7C   => LUT input is ith FPGA input
+    7'h7D   => LUT input is Q
+    7'h7E   => LUT input is constant 0
+    7'h7F   => LUT input is constant 1
 
 ## I/Os
 
