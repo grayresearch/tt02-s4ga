@@ -1,8 +1,8 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
-# tt02-s4ga
+# S4GA: Super Slow Serial SRAM FPGA for Tiny Tapeout 2
 
-This is the TinyTapeout2 Super Slow Serial SRAM FPGA, S4GA, the best
+This is the Tiny Tapeout 2 Super Slow Serial SRAM FPGA, S4GA, the best
 FPGA I could implement in ~100x100um of the 130nm Skywater ASIC PDK.
 
 This version of S4GA uses an external serial SRAM with SQI (QSPI) mode
@@ -107,3 +107,6 @@ See also my prior [Zero-to-ASIC S4GA repo](https://github.com/grayresearch/s4ga)
 1. Implement yosys + bitgen based flow Verilog => configuration bitstream
 
 _More soon_.
+
+Copyright (C) 2022, Gray Research LLC.
+Licensed under the Apache License, Version 2.0.
