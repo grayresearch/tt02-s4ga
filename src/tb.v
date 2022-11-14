@@ -5,7 +5,9 @@ module tb(
     input wire          clk,
     input wire          rst,
     input wire [3:0]    si,
-    output wire [7:0]   luts
+    input wire [1:0]    inputs,
+    output wire [6:0]   outputs,
+    output wire         debug
 );
     initial begin
         $dumpfile ("tb.vcd");
@@ -13,9 +15,9 @@ module tb(
         #1;
     end
 
-    wire [7:0] io_in = {2'b0, si, rst, clk};
+    wire [7:0] io_in = {inputs,si,rst,clk};
     wire [7:0] io_out;
-    assign luts = io_out;
+    assign {debug,outputs} = io_out;
 
     s4ga s4ga(.io_in, .io_out);
 endmodule

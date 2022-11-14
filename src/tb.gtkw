@@ -1,55 +1,110 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Nov  6 20:50:44 2022
+[*] Mon Nov 14 06:54:25 2022
 [*]
-[dumpfile] "/home/jan/git/tt02-s4t2-fpga/src/tb.vcd"
-[dumpfile_mtime] "Sun Nov  6 20:47:43 2022"
-[dumpfile_size] 150969
-[savefile] "/home/jan/git/tt02-s4t2-fpga/src/tb.gtkw"
-[timestart] 9517800000
+[dumpfile] "/home/jan/git/tt02-s4ga/src/tb.vcd"
+[dumpfile_mtime] "Mon Nov 14 06:52:02 2022"
+[dumpfile_size] 321065
+[savefile] "/home/jan/git/tt02-s4ga/src/tb.gtkw"
+[timestart] 1346000000
 [size] 2160 1231
 [pos] -1 -1
-*-26.000000 10050000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.000000 1610000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [sst_width] 297
-[signals_width] 136
+[signals_width] 268
 [sst_expanded] 1
 [sst_vpaned_height] 378
 @420
 tb.s4ga.N
 tb.s4ga.K
+tb.s4ga.I
+tb.s4ga.O
 tb.s4ga.SI_W
-tb.s4ga.N_W
-tb.s4ga.K_W
-tb.s4ga.MASK_W
-tb.s4ga.IDX_W
-tb.s4ga.SR_W
-tb.s4ga.SEG_W
-tb.s4ga.MASK_SEGS
 tb.s4ga.IDX_SEGS
+@c00420
+tb.s4ga.N_W
+@28
+(0)tb.s4ga.N_W
+(1)tb.s4ga.N_W
+(2)tb.s4ga.N_W
+(3)tb.s4ga.N_W
+(4)tb.s4ga.N_W
+(5)tb.s4ga.N_W
+(6)tb.s4ga.N_W
+(7)tb.s4ga.N_W
+(8)tb.s4ga.N_W
+(9)tb.s4ga.N_W
+(10)tb.s4ga.N_W
+(11)tb.s4ga.N_W
+(12)tb.s4ga.N_W
+(13)tb.s4ga.N_W
+(14)tb.s4ga.N_W
+(15)tb.s4ga.N_W
+(16)tb.s4ga.N_W
+(17)tb.s4ga.N_W
+(18)tb.s4ga.N_W
+(19)tb.s4ga.N_W
+(20)tb.s4ga.N_W
+(21)tb.s4ga.N_W
+(22)tb.s4ga.N_W
+(23)tb.s4ga.N_W
+(24)tb.s4ga.N_W
+(25)tb.s4ga.N_W
+(26)tb.s4ga.N_W
+(27)tb.s4ga.N_W
+(28)tb.s4ga.N_W
+(29)tb.s4ga.N_W
+(30)tb.s4ga.N_W
+(31)tb.s4ga.N_W
+@1401200
+-group_end
+@420
+tb.s4ga.K_W
+tb.s4ga.LL
+tb.s4ga.MASK_W
+tb.s4ga.MAX_W
+tb.s4ga.SR_W
+tb.s4ga.MASK_SEGS
+tb.s4ga.SEG_W
 @22
 tb.s4ga.io_in[7:0]
-tb.s4ga.io_out[7:0]
 @28
+[color] 3
 tb.s4ga.clk
 tb.s4ga.rst
-@23
-tb.s4ga.n[5:0]
-@28
-tb.s4ga.k[2:0]
-tb.s4ga.seg[1:0]
 @22
 tb.s4ga.si[3:0]
-tb.s4ga.sr[11:0]
-tb.s4ga.mask[15:0]
-tb.s4ga.idx[5:0]
+@28
+tb.s4ga.inputs[1:0]
+@22
+tb.s4ga.n[6:0]
+@28
+tb.s4ga.k[2:0]
+tb.s4ga.seg[2:0]
+@22
+tb.s4ga.io_out[7:0]
+@28
+tb.s4ga.debug
+@22
+tb.s4ga.idx[6:0]
 @28
 tb.s4ga.in
 @22
-tb.s4ga.ins[3:0]
+tb.s4ga.ins[4:0]
+tb.s4ga.mask[31:0]
+@23
+tb.s4ga.luts[66:0]
 @28
 tb.s4ga.lut
 @22
-tb.s4ga.luts[63:0]
+tb.s4ga.half[15:0]
+@28
+tb.s4ga.q
+@22
+tb.s4ga.outputs[6:0]
+tb.s4ga.sr[27:0]
+@420
+tb.s4ga.i
 [pattern_trace] 1
 [pattern_trace] 0
