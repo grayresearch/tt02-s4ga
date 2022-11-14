@@ -90,6 +90,10 @@ All outputs switch on clk and switch in the same cycle.
     io_out[6]   out[6]  output 6 <= LUT N-I+6
     io_out[7]   debug   debug: evaluated LUT input values, LUT output values
 
+## Block diagram
+
+![Block diagram](doc/S4GA-block-diagram.png)
+
 ## ASIC implementation
 
 [Explore the GDS 3D view](https://grayresearch.github.io/tt02-s4ga).
