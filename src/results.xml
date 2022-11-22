@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1669143405" />
-    <testcase name="test_s4ga" classname="test" file="/home/jan/git/tt02-s4ga/src/test.py" lineno="123" time="0.1879432201385498" sim_time_ns="15780000.001" ratio_time="83961528.32417762" />
-  </testsuite>
-</testsuites>
