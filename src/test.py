@@ -8,12 +8,13 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-N = 241             # no. LUTs
+N = 283             # no. LUTs
 K = 5               # no. LUT inputs
 I = 2               # no. FPGA inputs
 W = 4               # LUT config data segment width
-MSEGS = (1<<K)//4   # LUT mask segments
-LL = 2*K + MSEGS    # LUT latency (no. cycles in a LUT config frame)
+MASK_SEGS = (1<<K)//W   # LUT mask segments
+IDX_SEGS = ((3+I+N).bit_length() + W-1) // W
+LL = K*IDX_SEGS + MASK_SEGS    # LUT latency (no. cycles in a LUT config frame)
 
 def nyb(n, i):
     return (n >> (i*W)) & ((1<<W)-1)
@@ -46,7 +47,7 @@ vectors=[
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
     [0,0,0,0,0, _E, 0,0,  0,0,0,0,0, 0], # _E(0s) = 0
-    [1,1,1,1,1, _E, 0,0,  1,1,1,1,1, 1], # _E(1s) = 0
+    [1,1,1,1,1, _E, 0,0,  1,1,1,1,1, 1], # _E(1s) = 1
 
     [_,_,_,_,_, _0, 0,0,  0,0,0,0,0, 0], # L,Q = 0,0
     [Q,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(Q,...) = 0
@@ -114,9 +115,13 @@ vectors=[
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
 
-#230: test O=7 output pins: output 'b1010101
-    zero, zero, zero, zero,
+#270: test O=7 output pins: output 'b1010101
+    zero, zero, zero, zero, zero, zero,
 
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
@@ -126,7 +131,7 @@ vectors=[
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
 
-#241:
+#283:
 ]
 
 ExpectedFPGAOutput = 0x55
@@ -166,21 +171,21 @@ async def test_s4ga(dut):
                 # adjust relative index to the specified LUT output
                 # to account for 'luts' shuffling circulating shift
                 # register, which shifts every cycle
-                idx = ((i-1 - idx)*LL + 2*k+1) % N
+                idx = ((i-1 - idx)*LL + IDX_SEGS*k+IDX_SEGS-1) % N
 
-            # adjust indices so that special indices fall in [0,4]
+            # adjust index so that special indices and inputs precede relatively indexed LUT outputs
             idx = (idx + SPECIALS) % (N + SPECIALS);
 
-            dut.si.value = nyb(idx, 1)
-            await ClockCycles(dut.clk, 1)
-            dut.si.value = nyb(idx, 0)
-            await ClockCycles(dut.clk, 1)
+            # send index big-endian
+            for s in range(IDX_SEGS-1,-1,-1):
+                dut.si.value = nyb(idx, s)
+                await ClockCycles(dut.clk, 1)
 
             cocotb.fork(delay_assert(dut, dut.s4ga.debug, vec[K+3+k], "input error: i=%d k=%d" % (i, k)))
 
         # send mask and check LUT output
-        for j in range(MSEGS):
-            dut.si.value = nyb(mask, MSEGS-1-j)
+        for j in range(MASK_SEGS):
+            dut.si.value = nyb(mask, MASK_SEGS-1-j)
             await ClockCycles(dut.clk, 1)
 
         cocotb.fork(delay_assert(dut, dut.s4ga.debug, vec[2*K+3], "output error: i=%d" % (i)))

@@ -25,16 +25,16 @@ A given LUT output's index increments / wraps around to 0, each cycle.
 Therefore LUT outputs' LUT input indices in the configuration bitstream
 must compensate for these shenanigans.
 
-The project is currently configured to repeatedly evaluate N=241 K=5-LUTs with LL=18 cycles.
+The project is currently configured to repeatedly evaluate N=283 K=5-LUTs with LL=23 cycles.
 Each LUT configuration has this format:
 
     // LUT config:
-    struct LUT_n241 { // all fields big-endian, most signif. nybble first:
-        bit[8] in4;     // index of LUT input 4, in [0,3+I+N)
-        bit[8] in3;     // index of LUT input 3, in [0,3+I+N)
-        bit[8] in2;     // index of LUT input 2, in [0,3+I+N)
-        bit[8] in1;     // index of LUT input 1, in [0,3+I+N)
-        bit[8] in0;     // index of LUT input 0, in [0,3+I+N)
+    struct LUT { // all fields big-endian, most signif. nybble first:
+        bit[12] in4;    // index of LUT input 4, in [0,3+I+N)
+        bit[12] in3;    // index of LUT input 3, in [0,3+I+N)
+        bit[12] in2;    // index of LUT input 2, in [0,3+I+N)
+        bit[12] in1;    // index of LUT input 1, in [0,3+I+N)
+        bit[12] in0;    // index of LUT input 0, in [0,3+I+N)
         bit[32] mask;   // 5-LUT truth table
     };
 
