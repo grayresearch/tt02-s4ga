@@ -43,7 +43,7 @@ tb.s4ga.si[3:0]
 tb.s4ga.inputs[1:0]
 @22
 tb.s4ga.all_in[71:0]
-tb.s4ga.luts[66:0]
+tb.s4ga.luts[88:0]
 tb.s4ga.n[6:0]
 tb.s4ga.k[2:0]
 tb.s4ga.seg[2:0]
