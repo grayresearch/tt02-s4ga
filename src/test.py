@@ -8,7 +8,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-N = 199             # no. LUTs
+N = 151             # no. LUTs
 K = 5               # no. LUT inputs
 I = 2               # no. FPGA inputs
 W = 4               # LUT config data segment width
@@ -103,16 +103,9 @@ vectors=[
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
-    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
 
-#150:
-    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
-    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
-    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
-    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
-
-#190: test O=7 output pins: output 'b1010101
-    zero, zero,
+#140: test O=7 output pins: output 'b1010101
+    zero, zero, zero, zero,
 
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
@@ -122,7 +115,7 @@ vectors=[
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
 
-#199:
+#151:
 ]
 
 ExpectedFPGAOutput = 0x55
@@ -183,4 +176,5 @@ async def test_s4ga(dut):
 
     # check FPGA outputs updated with last O=7 LUT outputs
     await ClockCycles(dut.clk, 1)
-    cocotb.fork(delay_assert(dut, dut.outputs, ExpectedFPGAOutput, "FPGA output error"))
+    await ClockCycles(dut.clk, 1)
+    assert dut.outputs.value == ExpectedFPGAOutput, "FPGA output error"
