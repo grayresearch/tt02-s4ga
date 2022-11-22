@@ -32,6 +32,7 @@ set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 150 170"
 set ::env(FP_CORE_UTIL) 55
 set ::env(PL_BASIC_PLACEMENT) {1}
+set ::env(PL_ROUTABILITY_DRIVEN) {1}
 
 set ::env(FP_IO_HLENGTH) 2
 set ::env(FP_IO_VLENGTH) 2
