@@ -10,6 +10,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
 N = 67              # no. LUTs
 K = 5               # no. LUT inputs
+I = 2               # no. FPGA inputs
 W = 4               # LUT config data segment width
 MSEGS = (1<<K)//4   # LUT mask segments
 LL = 2*K + MSEGS    # LUT latency (no. cycles in a LUT config frame)
@@ -17,12 +18,13 @@ LL = 2*K + MSEGS    # LUT latency (no. cycles in a LUT config frame)
 def nyb(n, i):
     return (n >> (i*W)) & ((1<<W)-1)
 
-# special LUT input indices
-I = 0x7c        # ith pin input
-Q = 0x7d        # Q (carry-in)
-_ = 0x7e        # constant 0
-H = 0x7f        # constant 1
-SpecIndices = I
+# special LUT input indices -- these are rotated into [0,4] below.
+_ = N+0         # constant 0
+H = N+1         # constant 1
+Q = N+2         # Q (often carry-in)
+I0 = N+3        # FPGA input 0
+I1 = N+4        # FPGA input 1
+SPECIALS = 5
 
 # LUTs
 _E = 0xFFFF0000 # pass E input
@@ -36,10 +38,10 @@ zero = [_,_,_,_,_, _0, 0,0,  0,0,0,0,0, 0]
 vectors=[
 #    LUT-input      inps  expected ins,lut
 #    4 3 2 1 0 mask 0 1   4 3 2 1 0  O
-    [I,_,_,_,_, _E, 0,1,  0,0,0,0,0, 0], # input 0 = 0
-    [I,_,_,_,_, _E, 0,1,  1,0,0,0,0, 1], # input 1 = 1
-    [I,_,_,_,_, _E, 1,0,  1,0,0,0,0, 1], # input 0 = 1
-    [I,_,_,_,_, _E, 1,0,  0,0,0,0,0, 0], # input 1 = 0
+    [I0,_,_,_,_,_E, 0,1,  0,0,0,0,0, 0], # input 0 = 0
+    [I1,_,_,_,_,_E, 0,1,  1,0,0,0,0, 1], # input 1 = 1
+    [I0,_,_,_,_,_E, 1,0,  1,0,0,0,0, 1], # input 0 = 1
+    [I1,_,_,_,_,_E, 1,0,  0,0,0,0,0, 0], # input 1 = 0
 
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
@@ -105,6 +107,11 @@ vectors=[
 
 ExpectedFPGAOutput = 0x55
 
+# wait one clock cycle, then check the signal matches the test vector expected value
+async def delay_assert(dut, signal, expected, error):
+    await ClockCycles(dut.clk, 1)
+    assert signal.value == expected, error
+
 @cocotb.test()
 async def test_s4ga(dut):
     print("N=%d K=%d LL=%d" % (N, K, LL));
@@ -131,27 +138,29 @@ async def test_s4ga(dut):
         # send LUT input indices and check LUT input values
         for k in range(K):
             idx = vec[k]
-            if idx < SpecIndices:
+            if idx < N:
                 # adjust relative index to the specified LUT output
                 # to account for 'luts' shuffling circulating shift
                 # register, which shifts every cycle
                 idx = ((i-1 - idx)*LL + 2*k+1) % N
+
+            # adjust indices so that special indices fall in [0,4]
+            idx = (idx + SPECIALS) % (N + SPECIALS);
+
             dut.si.value = nyb(idx, 1)
             await ClockCycles(dut.clk, 1)
             dut.si.value = nyb(idx, 0)
             await ClockCycles(dut.clk, 1)
-            if dut.s4ga.debug.value != vec[K+3+k]:
-                print("input error: i=%d k=%d =%d != %d" % (i, k, dut.s4ga.debug.value, vec[K+3+k]))
-            assert(dut.s4ga.debug.value == vec[K+3+k])
+
+            cocotb.fork(delay_assert(dut, dut.s4ga.debug, vec[K+3+k], "input error: i=%d k=%d" % (i, k)))
 
         # send mask and check LUT output
         for j in range(MSEGS):
             dut.si.value = nyb(mask, MSEGS-1-j)
             await ClockCycles(dut.clk, 1)
-        if dut.s4ga.debug.value != vec[2*K+3]:
-            print("output error: i=%d =%d != %d" % (i, dut.s4ga.debug.value, vec[2*K+3]))
-        assert(dut.s4ga.debug.value == vec[2*K+3])
+
+        cocotb.fork(delay_assert(dut, dut.s4ga.debug, vec[2*K+3], "output error: i=%d" % (i)))
 
     # check FPGA outputs updated with last O=7 LUT outputs
     await ClockCycles(dut.clk, 1)
-    assert(dut.outputs.value == ExpectedFPGAOutput)
+    cocotb.fork(delay_assert(dut, dut.outputs, ExpectedFPGAOutput, "FPGA output error"))

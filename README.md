@@ -30,11 +30,11 @@ Each LUT configuration has this format:
 
     // LUT config:
     struct LUT_n67_k5 { // all fields big-endian, most signif. nybble first:
-        bit[8] in4;     // relative index of LUT input 4, in [0,N)
-        bit[8] in3;     // relative index of LUT input 3, in [0,N)
-        bit[8] in2;     // relative index of LUT input 2, in [0,N)
-        bit[8] in1;     // relative index of LUT input 1, in [0,N)
-        bit[8] in0;     // relative index of LUT input 0, in [0,N)
+        bit[8] in4;     // index of LUT input 4, in [0,3+I+N)
+        bit[8] in3;     // index of LUT input 3, in [0,3+I+N)
+        bit[8] in2;     // index of LUT input 2, in [0,3+I+N)
+        bit[8] in1;     // index of LUT input 1, in [0,3+I+N)
+        bit[8] in0;     // index of LUT input 0, in [0,3+I+N)
         bit[32] mask;   // 5-LUT truth table
     };
 
@@ -46,26 +46,29 @@ This enables efficient ripple carry adders, using the upper half-LUT
 to evaluate sum[i] and the lower half-LUT to evaluate the carry[i],
 fed into the next LUT (via Q).
 
-## Special LUT input indices: 
-
-LUT input indices with most significant bits = 1 encode four special LUT input values.
-For example with N=67, i.e. 7b indices, we have
-
-    7'h7C   => LUT input is ith FPGA input
-    7'h7D   => LUT input is Q
-    7'h7E   => LUT input is constant 0
-    7'h7F   => LUT input is constant 1
-
 ## I/Os
 
 Parameter I is the number of FPGA input signals. Currently I=2.
-These become the values of the first I LUTs
-(i.e., the first I LUT inputs, and LUT masks, are ignored.)
 
 Parameter O is the number of FPGA outputs. Currently O=7.
+
 The last O LUT outputs are copied to the io_out[6:0] output register,
 in each cycle in which evaluation of all of the N K-LUTs completes.
 On reset, io_out[6:0] is '0.
+
+## Special LUT input indices: 
+
+The first 3 + I LUT input indices encode special inputs and FPGA input signals.
+    0       => LUT input is constant 0
+    1       => LUT input is constant 1
+    2       => LUT input is Q
+    3       => FPGA input #0
+    ...     => ...
+    2+I     => FPGA input #I-1
+    3+I     => a recent LUT output
+    ...     => ...
+    2+I+N   => a recent LUT output
+    etc.
 
 ## Pinout
 
