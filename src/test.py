@@ -8,7 +8,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-N = 283             # no. LUTs
+N = 311             # no. LUTs
 K = 5               # no. LUT inputs
 I = 2               # no. FPGA inputs
 W = 4               # LUT config data segment width
@@ -119,22 +119,25 @@ vectors=[
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
 
-#270: test O=7 output pins: output 'b1010101
-    zero, zero, zero, zero, zero, zero,
+#300: test O=7 output pins: output 'b1100101
+    zero, zero, zero, zero,
 
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
+    [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
+    [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
-    [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
-    [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
 
-#283:
+#311:
 ]
 
-ExpectedFPGAOutput = 0x55
+ExpectedFPGAOutput = 0x65
 
 # wait one clock cycle, then check the signal matches the test vector expected value
 async def delay_assert(dut, signal, expected, error):
