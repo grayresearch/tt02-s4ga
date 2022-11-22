@@ -8,7 +8,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-N = 151             # no. LUTs
+N = 241             # no. LUTs
 K = 5               # no. LUT inputs
 I = 2               # no. FPGA inputs
 W = 4               # LUT config data segment width
@@ -103,8 +103,19 @@ vectors=[
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
     zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
 
-#140: test O=7 output pins: output 'b1010101
+#200:
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+    zero, zero, zero, zero, zero, zero, zero, zero, zero, zero,
+
+#230: test O=7 output pins: output 'b1010101
     zero, zero, zero, zero,
 
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
@@ -115,7 +126,7 @@ vectors=[
     [_,_,_,_,_, _E, 0,0,  0,0,0,0,0, 0], # _E(0,...) = 0
     [H,_,_,_,_, _E, 0,0,  1,0,0,0,0, 1], # _E(1,...) = 1
 
-#151:
+#241:
 ]
 
 ExpectedFPGAOutput = 0x55
