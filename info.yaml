@@ -17,7 +17,7 @@ documentation:
   discord:      "jangray"      # Your discord handle
   title:        "S4GA: Super Slow Serial SRAM FPGA"      # Project title
   description:  "one fracturable 5-LUT that receives FPGA LUT configuration frames, serially evaluates LUT inputs and LUT outputs"      # Short description of what your project does
-  how_it_works: "The design is a single physical LUT into which an external agent pours a series of 72b LUT configuration frames, four bits per cycle. Every 18 clock cycles it evaluates a 5-input LUT. The last N=67 LUT output values are kept on die to be used as LUT inputs of subsequent LUTs. The design also has 2 FPGA input pins and 7 FPGA output pins."      # Longer description of how the project works
+  how_it_works: "The design is a single physical LUT into which an external agent pours a series of 92b LUT configuration frames, four bits per cycle. Every 23 clock cycles it evaluates a 5-input LUT. The last N=283 LUT output values are kept on die to be used as LUT inputs of subsequent LUTs. The design also has 2 FPGA input pins and 7 FPGA output pins."      # Longer description of how the project works
   how_to_test:  "tricky"      # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   external_hw:  "serial SRAM or FLASH"      # Describe any external hardware needed
   language:     "verilog" # other examples include Verilog, Amaranth, VHDL, etc

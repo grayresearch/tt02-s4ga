@@ -3,7 +3,7 @@
 # S4GA: Super Slow Serial SRAM FPGA for Tiny Tapeout 2
 
 This is the Tiny Tapeout 2 Super Slow Serial SRAM FPGA, S4GA, the best
-FPGA I could implement in ~100x100um of the 130nm Skywater ASIC PDK.
+FPGA I could implement in ~150x170um of the 130nm Skywater ASIC PDK.
 
 This version of S4GA uses an external serial SRAM with SQI (QSPI) mode
 such as the Microchip 23LC512 to continually stream in 4-bit segments
